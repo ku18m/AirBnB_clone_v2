@@ -2,7 +2,6 @@
 """Flask app"""
 from flask import Flask, render_template
 from models import storage
-from models.state import State
 
 
 app = Flask(__name__)
@@ -54,17 +53,17 @@ def number_odd_or_even(number):
                            number=number, status=status)
 
 
-@app.route('/states_list')
-def states_list():
-    """Returns a string at the /states_list route."""
-    states = storage.all(State)
-    return render_template('7-states_list.html', states=states)
-
-
 @app.teardown_appcontext
 def teardown_db(exception):
     """Closes the current sqlalchemy session."""
     storage.close()
+
+
+@app.route('/states_list')
+def states_list():
+    """Returns a string at the /states_list route."""
+    states = storage.all("State")
+    return render_template('7-states_list.html', states=states)
 
 
 if __name__ == '__main__':
