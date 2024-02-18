@@ -6,10 +6,10 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
 from models.state import State
 from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
-from models.user import User
+#from models.amenity import Amenity
+#from models.place import Place
+#from models.review import Review
+#from models.user import User
 
 
 env_mysql = {}
@@ -25,14 +25,7 @@ class DBStorage:
     """This class manages storage of hbnb models in mysql"""
     __engine = None
     __session = None
-    __classes = {
-        'State': State,
-        'City': City,
-        'Amenity': Amenity,
-        'Place': Place,
-        'Review': Review,
-        'User': User
-    }
+
 
     def __init__(self):
         """Instantiate a DBStorage object"""
@@ -53,13 +46,11 @@ class DBStorage:
         if cls is None:
             objs = self.__session.query(State).all()
             objs += self.__session.query(City).all()
-            objs += self.__session.query(Amenity).all()
-            objs += self.__session.query(Place).all()
-            objs += self.__session.query(Review).all()
-            objs += self.__session.query(User).all()
+            # objs += self.__session.query(Amenity).all()
+            # objs += self.__session.query(Place).all()
+            # objs += self.__session.query(Review).all()
+            # objs += self.__session.query(User).all()
         else:
-            if isinstance(cls, str):
-                cls = self.__classes.get(cls)
             objs = self.__session.query(cls).all()
         dics = []
         for obj in objs:
