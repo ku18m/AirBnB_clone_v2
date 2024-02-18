@@ -8,69 +8,27 @@ app = Flask(__name__)
 app.url_map.strict_slashes = False
 
 
-@app.route('/')
-def hello_hbnb():
-    """Returns a string at the root route."""
-    return 'Hello HBNB!'
-
-
-@app.route('/hbnb')
-def hbnb():
-    """Returns a string at the /hbnb route."""
-    return 'HBNB'
-
-
-@app.route('/c/<text>')
-def c_route(text):
-    """Returns a string at the /c route."""
-    return 'C {}'.format(text.replace('_', ' '))
-
-
-@app.route('/python/')
-@app.route('/python/<text>')
-def python_route(text='is cool'):
-    """Returns a string at the /python route."""
-    return 'Python {}'.format(text.replace('_', ' '))
-
-
-@app.route('/number/<int:n>')
-def number_route(n):
-    """Returns a string at the /number route."""
-    return '{} is a number'.format(n)
-
-
-@app.route('/number_template/<int:number>')
-def number_template(number):
-    """Returns a string at the /number_template route."""
-    return render_template('5-number.html', number=number)
-
-
-@app.route('/number_odd_or_even/<int:number>')
-def number_odd_or_even(number):
-    """Returns a string at the /number_odd_or_even route."""
-    status = 'even' if number % 2 == 0 else 'odd'
-    return render_template('6-number_odd_or_even.html',
-                           number=number, status=status)
-
-
 @app.teardown_appcontext
 def teardown_db(exception):
     """Closes the current sqlalchemy session."""
     storage.close()
 
 
-@app.route('/states_list')
+@app.route('/states')
 def states_list():
     """Returns a string at the /states_list route."""
     states = storage.all("State")
-    return render_template('7-states_list.html', states=states)
+    return render_template('9-states.html', states=states)
 
 
-@app.route('/cities_by_states')
-def cities_by_states():
-    """Returns a string at the /cities_by_states route."""
+@app.route('/states/<id>')
+def states_id(id):
+    """Returns a string at the /states/<id> route."""
     states = storage.all("State")
-    return render_template('8-cities_by_states.html', states=states)
+    for state in states:
+        if state.id == id:
+            return render_template('9-states.html', state=state)
+    return render_template('9-states.html', state=None)
 
 
 if __name__ == '__main__':
