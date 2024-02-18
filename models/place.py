@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from sqlalchemy.orm import relationship
-from models.base_model import (BaseModel, Base, Column, String,
+from models.base_model import (BaseModel, Base, Column, String, 
                                ForeignKey, Float, Integer, Table)
 
 
@@ -43,26 +43,35 @@ class Place(BaseModel, Base):
                              secondary="place_amenity", viewonly=False)
     amenity_ids = []
 
-    @property
-    def reviews(self):
-        """Returns the list of Review instances with place_id
-        equals to the current Place.id
-        """
-        from models import storage
-        from models.review import Review
-        return storage.all(Review).values()
+    import os
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        reviews = relationship("Review", cascade='all, delete, delete-orphan',
+                               backref="place")
 
-    @property
-    def amenities(self):
-        """Returns the list of Amenity instances with place_id
-        equals to the current Place.id
-        """
-        return self.amenity_ids
+        amenities = relationship("Amenity", secondary=place_amenity,
+                                 viewonly=False,
+                                 back_populates="place_amenities")
+    else:
+        @property
+        def reviews(self):
+            """Returns the list of Review instances with place_id
+            equals to the current Place.id
+            """
+            from models import storage
+            from models.review import Review
+            return storage.all(Review).values()
 
-    @amenities.setter
-    def amenities(self, obj):
-        """Sets the list of amenity_ids"""
-        from models.amenity import Amenity
-        if type(obj) is Amenity and obj.id not in self.amenity_ids:
-            self.amenity_ids.append(obj.id)
-            self.save()
+        @property
+        def amenities(self):
+            """Returns the list of Amenity instances with place_id
+            equals to the current Place.id
+            """
+            return self.amenity_ids
+
+        @amenities.setter
+        def amenities(self, obj):
+            """Sets the list of amenity_ids"""
+            from models.amenity import Amenity
+            if type(obj) is Amenity and obj.id not in self.amenity_ids:
+                self.amenity_ids.append(obj.id)
+                self.save()
