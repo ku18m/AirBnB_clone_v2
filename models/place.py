@@ -56,7 +56,7 @@ class Place(BaseModel, Base):
             """
             from models import storage
             from models.review import Review
-            return storage.all(Review).values()
+            return storage.all(Review)
 
         @property
         def amenities(self):
