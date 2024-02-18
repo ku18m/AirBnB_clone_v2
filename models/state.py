@@ -17,7 +17,7 @@ class State(BaseModel, Base):
         cascade="all, delete, delete-orphan"
         )
 
-    @property
+    @hybrid_property
     def cities(self):
         """ returns list of City instances with state_id == to the current
         State.id """
