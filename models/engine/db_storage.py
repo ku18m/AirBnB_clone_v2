@@ -53,7 +53,7 @@ class DBStorage:
             objs = self.__session.query(cls).all()
         dics = []
         for obj in objs:
-            dics.append(obj)
+            dics.append(str(obj))
         return dics
 
     def new(self, obj):
