@@ -74,7 +74,7 @@ class BaseModel:
                     value = float(value)
                     if value.is_integer():
                         value = int(value)
-                except ValueError:
+                except (ValueError, TypeError):
                     pass
             setattr(self, key, value)
 

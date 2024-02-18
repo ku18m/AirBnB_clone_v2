@@ -57,14 +57,12 @@ class Place(BaseModel, Base):
         """Returns the list of Amenity instances with place_id
         equals to the current Place.id
         """
-        from models import storage
-        from models.amenity import Amenity
-        return storage.all(Amenity).values()
+        return self.amenity_ids
 
     @amenities.setter
     def amenities(self, obj):
         """Sets the list of amenity_ids"""
         from models.amenity import Amenity
-        if type(obj) is Amenity:
+        if type(obj) is Amenity and obj.id not in self.amenity_ids:
             self.amenity_ids.append(obj.id)
             self.save()
