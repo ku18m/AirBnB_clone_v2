@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """Flask app that returns a string at the root route."""
 from flask import Flask
 
