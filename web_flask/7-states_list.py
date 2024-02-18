@@ -54,17 +54,17 @@ def number_odd_or_even(number):
                            number=number, status=status)
 
 
+@app.route('/states_list')
+def states_list():
+    """Returns a string at the /states_list route."""
+    states = sorted(list(storage.all("State")), key=lambda x: x.name)
+    return render_template('7-states_list.html', states=states)
+
+
 @app.teardown_appcontext
 def teardown_db(exception):
     """Closes the current sqlalchemy session."""
     storage.close()
-
-
-@app.route('/states_list')
-def states_list():
-    """Returns a string at the /states_list route."""
-    states = storage.all(State)
-    return render_template('7-states_list.html', states=states)
 
 
 if __name__ == '__main__':
