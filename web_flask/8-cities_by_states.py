@@ -54,7 +54,7 @@ def number_odd_or_even(number):
 
 
 @app.teardown_appcontext
-def teardown_db(exception):
+def teardown_db(exception=None):
     """Closes the current sqlalchemy session."""
     storage.close()
 
