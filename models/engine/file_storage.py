@@ -6,21 +6,21 @@ import json
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     from models.base_model import BaseModel
-    # from models.user import User
-    # from models.place import Place
+    from models.user import User
+    from models.place import Place
     from models.state import State
     from models.city import City
     from models.amenity import Amenity
-    # from models.review import Review
+    from models.review import Review
     __file_path = 'file.json'
     __objects = {}
     __classes = {
         'State': State,
         'City': City,
         'Amenity': Amenity,
-        # 'Place': Place,
-        # 'Review': Review,
-        # 'User': User
+        'Place': Place,
+        'Review': Review,
+        'User': User
     }
 
     def all(self, cls=None):
