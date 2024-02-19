@@ -16,19 +16,22 @@ def teardown_db(exception):
     storage.close()
 
 
-@app.route('/hbnb_filters')
+@app.route('/hbnb')
 def hbnb_filters():
-    """Returns a string at the /hbnb_filters route."""
+    """Returns a string at the /hbnb route."""
     if type == "db":
         states = storage.all("State")
         amenities = storage.all("Amenity")
+        places = storage.all("Place")
     else:
         states = storage.all("State").values()
         amenities = storage.all("Amenity").values()
+        places = storage.all("Place").values()
     return render_template(
-        '10-hbnb_filters.html',
+        '100-hbnb.html',
         states=states,
-        amenities=amenities
+        amenities=amenities,
+        places=places
         )
 
 
