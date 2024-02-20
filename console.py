@@ -141,8 +141,9 @@ class HBNBCommand(cmd.Cmd):
             return
         new_instance = HBNBCommand.classes[className]()
         new_instance.set(**classArgs)
-        print(new_instance.id)
         new_instance.save()
+        storage.reload()
+        print(new_instance.id)
 
     def help_create(self):
         """Help information for the create method"""
@@ -171,14 +172,12 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = c_name + "." + c_id
-        try:
-            if os.getenv('HBNB_TYPE_STORAGE') == "db":
-                print(storage.all(self.classes[args]))
-            else:
-                print(storage._FileStorage__objects[key])
-        except KeyError:
-            print("** no instance found **")
+        objs = storage.all(c_name)
+        for obj in objs:
+            if c_id == obj.id:
+                print(str(obj))
+                return
+        print("** no instance found **")
 
     def help_show(self):
         """Help information for the show command"""
@@ -205,13 +204,13 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = c_name + "." + c_id
-
-        try:
-            del storage.all()[key]
-            storage.save()
-        except KeyError:
-            print("** no instance found **")
+        objs = storage.all(c_name)
+        for obj in objs:
+            if c_id == obj.id:
+                storage.delete(obj)
+                storage.save()
+                return
+        print("** no instance found **")
 
     def help_destroy(self):
         """Help information for the destroy command"""
@@ -226,19 +225,13 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            if os.getenv('HBNB_TYPE_STORAGE') == "db":
-                print(storage.all(self.classes[args]))
-            else:
-                for k, v in storage._FileStorage__objects.items():
-                    if k.split(".")[0] == args:
-                        print_list.append(str(v))
-                print(print_list)
+
+            for k in storage.all(args):
+                print_list.append(str(k))
+            print(print_list)
         else:
-            if os.getenv('HBNB_TYPE_STORAGE') == "db":
-                print(storage.all())
-            else:
-                for k, v in storage._FileStorage__objects.items():
-                    print_list.append(str(v))
+                for k in storage.all():
+                    print_list.append(str(k))
                 print(print_list)
 
     def help_all(self):
@@ -287,8 +280,10 @@ class HBNBCommand(cmd.Cmd):
         # generate key from class and id
         key = c_name + "." + c_id
 
-        # determine if key is present
-        if key not in storage.all():
+        for obj in storage.all():
+            if obj.id == c_id:
+                break
+        if obj.id != c_id:
             print("** no instance found **")
             return
 
@@ -322,7 +317,6 @@ class HBNBCommand(cmd.Cmd):
             args = [att_name, att_val]
 
         # retrieve dictionary of current objects
-        new_dict = storage.all()[key]
 
         # iterate through attr names and values
         for i, att_name in enumerate(args):
@@ -340,9 +334,9 @@ class HBNBCommand(cmd.Cmd):
                     att_val = HBNBCommand.types[att_name](att_val)
 
                 # update dictionary with name, value pair
-                new_dict.__dict__.update({att_name: att_val})
+                obj.set(**{att_name: att_val})
 
-        new_dict.save()  # save updates to file
+        storage.save()  # save updates to file
 
     def help_update(self):
         """Help information for the update class"""
