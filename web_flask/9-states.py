@@ -17,14 +17,14 @@ def teardown_db(exception):
 @app.route('/states')
 def states_list():
     """Returns a string at the /states_list route."""
-    states = storage.all("State")
+    states = storage.all("State").values()
     return render_template('9-states.html', states=states)
 
 
 @app.route('/states/<id>')
 def states_id(id):
     """Returns a string at the /states/<id> route."""
-    states = storage.all("State")
+    states = storage.all("State").values()
     for state in states:
         if state.id == id:
             return render_template('9-states.html', state=state)
