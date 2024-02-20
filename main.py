@@ -1,39 +1,49 @@
 #!/usr/bin/python3
-from models import *
+"""Doc
+"""
+import MySQLdb
+import sys
+import uuid
+from models import storage
 from models.state import State
-from models.city import City
-from models.user import User
-from models.place import Place
-from models.amenity import Amenity
 
-all_places = {}
-try:
-    all_places = storage.all("Place")
-except:
-    all_places = storage.all(Place)
 
-if len(all_places) == 0:
+def add_states(number=1):
+    conn = MySQLdb.connect(host="localhost", port=3306, user="hbnb_dev", passwd="hbnb_dev_pwd", db="hbnb_dev_db", charset="utf8")
+    cur = conn.cursor()
+
+    for i in range(number):
+        cur.execute("INSERT INTO `states` (id, created_at, updated_at, name) VALUES ('{}','2016-03-25 19:42:40','2016-03-25 19:42:40','state{}');".format(str(uuid.uuid4()), i))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def wrapper_all_type(m_class):
+    res = {}
     try:
-        all_places = storage.all(Place)
+        res = storage.all(m_class)
     except:
-        all_places = storage.all("Place")
-    
+        res = {}
+    if res is None or len(res.keys()) == 0:
+        try:
+            res = storage.all(m_class.__name__)
+        except:
+            res = {}
+    return res
+        
 
-places_by_name = {}
+print(len(wrapper_all_type(State)))
 
-for p_id in all_places.keys():
-    place = all_places[p_id]
-    places_by_name[place.name] = place
+# Initial number of states
+add_states(3)
 
+storage.close()
+print(len(wrapper_all_type(State)))
 
-for p_name in sorted(places_by_name.keys()):
-    place = places_by_name[p_name]
-    print("place: {}".format(place.name))
-    if place.amenities is None:
-        continue
-    amenities_names = []
-    for amenity in place.amenities:
-        amenities_names.append(amenity.name)
-    
-    for a_name in sorted(amenities_names):
-        print("\tamenity: {}".format(a_name))
+# Add new states
+add_states(2)
+
+storage.close()
+print(len(wrapper_all_type(State)))
